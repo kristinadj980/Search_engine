@@ -3,6 +3,7 @@ import os
 from library.parser import Parser
 from os import path
 from trie import Trie, TrieNode
+from document import Document
 
 
 def main():
@@ -34,8 +35,15 @@ def main():
             links_dict, words_dict = parse_documents(filepaths)
 
             all_words = merge_words(words_dict)
-
             trie = create_trie(all_words)
+
+            graph = create_graph(links_dict)
+
+            # for g in graph:
+            #     print(g.document_path)
+            #     print(g.parents)
+            #     print(g.children)
+            #     print("-----------")
 
         elif option == 2:
             create_trie()
@@ -46,7 +54,7 @@ def main():
 
 
 def choose_directory():
-    # temp = "C:\\Users\\Lenovo\\Desktop\\oisisi_python\\test-skup"
+    # temp = "C:\\Users\\Lenovo\\Desktop\\oisisi_python\\test-skup\\faq"
     dir = input('Enter directory absolute path: ')
     # dir = temp
 
@@ -99,5 +107,24 @@ def create_trie(all_words):
         trie.insert(word)
 
     return trie
+
+
+def create_graph(links_dict):
+    documents = []
+
+    for html_path in links_dict:
+        document = Document()
+        document.document_path = html_path
+        document.children = links_dict[html_path]
+        document.parents = []
+
+        for html_path1 in links_dict:
+            for link1 in links_dict[html_path1]:
+                if link1 == html_path:
+                    document.parents.append(html_path1)
+
+        documents.append(document)
+
+    return documents
 
 main()
