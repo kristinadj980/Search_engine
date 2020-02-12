@@ -10,13 +10,20 @@ from query import Query
 def main():
     filepaths = None
     trie = None
+    graph = None
+    query = None
+
+    links_dict = None
+    words_dict = None
+    all_words = None
 
     while True:
         print("##################################")
         print("Menu")
         print("1. Choose directory")
         print("2. Create trie")
-        print("3. Enter query")
+        print("3. Create graph")
+        print("4. Enter query")
         print("0. Exit")
 
         option = input('Choose menu option: ')
@@ -37,9 +44,6 @@ def main():
             links_dict, words_dict = parse_documents(filepaths)
 
             all_words = merge_words(words_dict)
-            trie = create_trie(all_words)
-
-            graph = create_graph(links_dict)
 
             # for g in graph:
             #     print(g.document_path)
@@ -48,9 +52,11 @@ def main():
             #     print("-----------")
 
         elif option == 2:
-            create_trie()
+            trie = create_trie(all_words)
         elif option == 3:
-            create_query()
+            graph = create_graph(links_dict)
+        elif option == 4:
+            query = create_query()
         elif option == 0:
             sys.exit('Bye')
         else:
