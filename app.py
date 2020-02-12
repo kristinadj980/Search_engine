@@ -4,6 +4,7 @@ from library.parser import Parser
 from os import path
 from trie import Trie, TrieNode
 from document import Document
+from query import Query
 
 
 def main():
@@ -15,6 +16,7 @@ def main():
         print("Menu")
         print("1. Choose directory")
         print("2. Create trie")
+        print("3. Enter query")
         print("0. Exit")
 
         option = input('Choose menu option: ')
@@ -47,6 +49,8 @@ def main():
 
         elif option == 2:
             create_trie()
+        elif option == 3:
+            create_query()
         elif option == 0:
             sys.exit('Bye')
         else:
@@ -126,5 +130,63 @@ def create_graph(links_dict):
         documents.append(document)
 
     return documents
+
+
+def create_query():
+    while True:
+        query = input("Enter query: ")
+
+        if query.count("AND") > 1 or query.count("OR") > 1 or query.count("NOT") > 1:
+            print("Only one logical operator allowed")
+            continue
+
+        query_first = ""
+        query_second = ""
+
+        query_object = Query()
+
+        if "AND" in query:
+            query_object.operator = "AND"
+            splited = query.split("AND")
+            query_first = splited[0]
+            query_second = splited[1]
+        elif "OR" in query:
+            query_object.operator = "OR"
+            splited = query.split("OR")
+            query_first = splited[0]
+            query_second = splited[1]
+        elif "NOT" in query:
+            query_object.operator = "NOT"
+            splited = query.split("NOT")
+            query_first = splited[0]
+            query_second = splited[1]
+        else:
+            query_first = query
+
+        if query_first:
+            query_first_splited = query_first.strip().split(" ")
+
+            # preuzmi samo validne reci
+            for word in query_first_splited:
+                if not word == "":
+                    query_object.query_first.append(word)
+        if query_second:
+            query_second_splited = query_second.strip().split(" ")
+
+            #prezumi samo validne reci
+            for word in query_second_splited:
+                if not word == "":
+                    query_object.query_second.append(word)
+
+        if query_object.operator and (not query_object.query_first or not query_object.query_second):
+            print("Query is not valid")
+        else:
+            break
+
+    # print("operator", query_object.operator)
+    # print("first", query_object.query_first)
+    # print("second", query_object.query_second)
+
+    return query_object
 
 main()
