@@ -2,15 +2,18 @@ import sys
 import os
 from library.parser import Parser
 from os import path
+from trie import Trie, TrieNode
 
 
 def main():
     filepaths = None
+    trie = None
 
     while True:
         print("##################################")
         print("Menu")
         print("1. Choose directory")
+        print("2. Create trie")
         print("0. Exit")
 
         option = input('Choose menu option: ')
@@ -28,8 +31,14 @@ def main():
             else:
                 filepaths = find_html_files(directory)
 
-            parse_documents(filepaths)
+            links_dict, words_dict = parse_documents(filepaths)
 
+            all_words = merge_words(words_dict)
+
+            trie = create_trie(all_words)
+
+        elif option == 2:
+            create_trie()
         elif option == 0:
             sys.exit('Bye')
         else:
@@ -61,14 +70,34 @@ def find_html_files(dir):
 
 
 def parse_documents(paths):
-    all_words = dict()
-    all_links = dict()
+    words_dict = dict()
+    links_dict = dict()
 
     for path in paths:
         parser = Parser()
         links, words = parser.parse(path)
-        all_words[path] = words
-        all_links[path] = links
+        words_dict[path] = words
+        links_dict[path] = links
 
+    return links_dict, words_dict
+
+
+def merge_words(words_dict):
+    result = []
+    for array in words_dict:
+        for word in array:
+            if word not in result:
+                result.append(word)
+
+    return result
+
+
+def create_trie(all_words):
+    trie = Trie()
+
+    for word in all_words:
+        trie.insert(word)
+
+    return trie
 
 main()
