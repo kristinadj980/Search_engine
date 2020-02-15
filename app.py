@@ -2,9 +2,10 @@ import sys
 import os
 from library.parser import Parser
 from os import path
-from trie import Trie, TrieNode
-from graph import Graph, GraphNode
+from trie import Trie
+from graph import Graph
 from query import Query
+from set import Set
 
 
 def main():
@@ -64,6 +65,9 @@ def main():
             query = create_query()
         elif option == 5:
             result_set = search_documents(trie, query)
+
+
+
         elif option == 0:
             sys.exit('Bye')
         else:
