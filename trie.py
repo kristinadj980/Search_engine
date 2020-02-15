@@ -20,7 +20,7 @@ class Trie():
     def get_index(self, ch):
         return ord(ch) - ord('a')
 
-    def insert(self, word):
+    def insert(self, word, links):
 
         root = self.root
         len1 = len(word)
@@ -32,6 +32,7 @@ class Trie():
                 root.children[index] = self.get_node()
             root = root.children.get(index)
 
+        root.documents = links
         root.terminating = True
 
     def search(self, word):
@@ -41,7 +42,7 @@ class Trie():
         for i in range(len1):
             index = self.get_index(word[i])
             if not root:
-                return False
+                return []
             root = root.children.get(index)
 
-        return True if root and root.terminating else False
+        return root.documents if root and root.terminating else []
