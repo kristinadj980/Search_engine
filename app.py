@@ -3,7 +3,7 @@ import os
 from library.parser import Parser
 from os import path
 from trie import Trie, TrieNode
-from document import Document
+from graph import Graph, GraphNode
 from query import Query
 
 
@@ -72,8 +72,9 @@ def main():
 
 def choose_directory():
     # temp = "C:\\Users\\Lenovo\\Desktop\\oisisi_python\\test-skup\\faq"
-    dir = input('Enter directory absolute path: ')
-    # dir = temp
+    temp = "C:\\Users\\Maja\\Desktop\\oisisi_python\\test-skup\\faq"
+    # dir = input('Enter directory absolute path: ')
+    dir = temp
 
     if not os.path.isdir(dir):
         print('Path does not exist or it is a file, not a directory')
@@ -130,22 +131,12 @@ def create_trie(all_words):
 
 
 def create_graph(links_dict):
-    documents = []
+    graph = Graph()
 
     for html_path in links_dict:
-        document = Document()
-        document.document_path = html_path
-        document.children = links_dict[html_path]
-        document.parents = []
+        graph.insert(html_path, links_dict[html_path])
 
-        for html_path1 in links_dict:
-            for link1 in links_dict[html_path1]:
-                if link1 == html_path:
-                    document.parents.append(html_path1)
-
-        documents.append(document)
-
-    return documents
+    return graph
 
 
 def create_query():
