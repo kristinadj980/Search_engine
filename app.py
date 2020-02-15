@@ -12,6 +12,7 @@ def main():
     trie = None
     graph = None
     query = None
+    results = []
 
     links_dict = None
     words_dict = None
@@ -24,6 +25,7 @@ def main():
         print("2. Create trie")
         print("3. Create graph")
         print("4. Enter query")
+        print("5. Search documents")
         print("0. Exit")
 
         option = input('Choose menu option: ')
@@ -40,6 +42,9 @@ def main():
                 continue
             else:
                 filepaths = find_html_files(directory)
+                if len(filepaths) == 0:
+                    print('Path does not contain html document')
+                    continue
 
             links_dict, words_dict = parse_documents(filepaths)
 
@@ -57,6 +62,8 @@ def main():
             graph = create_graph(links_dict)
         elif option == 4:
             query = create_query()
+        elif option == 5:
+            results = search_documents(trie)
         elif option == 0:
             sys.exit('Bye')
         else:
@@ -102,8 +109,8 @@ def parse_documents(paths):
 
 def merge_words(words_dict):
     result = []
-    for array in words_dict:
-        for word in array:
+    for filepath in words_dict:
+        for word in words_dict[filepath]:
             if word not in result:
                 result.append(word)
 
@@ -194,5 +201,9 @@ def create_query():
     # print("second", query_object.query_second)
 
     return query_object
+
+
+def search_documents(trie):
+    print("TODO - not implemented")
 
 main()
