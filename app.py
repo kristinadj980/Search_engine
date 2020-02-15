@@ -12,7 +12,7 @@ def main():
     trie = None
     graph = None
     query = None
-    results = []
+    result_set = []
 
     links_dict = None
     words_dict = None
@@ -63,7 +63,7 @@ def main():
         elif option == 4:
             query = create_query()
         elif option == 5:
-            results = search_documents(trie, query)
+            result_set = search_documents(trie, query)
         elif option == 0:
             sys.exit('Bye')
         else:
@@ -71,9 +71,9 @@ def main():
 
 
 def choose_directory():
-    temp = "C:\\Users\\Lenovo\\Desktop\\oisisi_python\\test-skup\\faq"
-    # dir = input('Enter directory absolute path: ')
-    dir = temp
+    # temp = "C:\\Users\\Lenovo\\Desktop\\oisisi_python\\test-skup\\faq"
+    dir = input('Enter directory absolute path: ')
+    # dir = temp
 
     if not os.path.isdir(dir):
         print('Path does not exist or it is a file, not a directory')
@@ -198,14 +198,18 @@ def create_query():
         else:
             break
 
-    # print("operator", query_object.operator)
-    # print("first", query_object.query_first)
-    # print("second", query_object.query_second)
-
     return query_object
 
 
 def search_documents(trie, query):
-    # print("TODO - not implemented")
+    result_set = dict()
+
+    for word in query.query_first:
+        result_set[word] = trie.search(word)
+
+    for word in query.query_second:
+        result_set[word] = trie.search(word)
+
+    return result_set
 
 main()
