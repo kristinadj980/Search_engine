@@ -33,7 +33,8 @@ def main():
         print("4. Enter query")
         print("5. Search documents")
         print("6. Calculate rank")
-        print("7. Show results table")
+        print("7. Show all results")
+        print("8. Show paginated results")
         print("0. Exit")
 
         option = input('Choose menu option: ')
@@ -62,13 +63,9 @@ def main():
             graph = None
             query = None
             result = None
+            search_result = None
+            table = None
 
-
-            # for g in graph:
-            #     print(g.document_path)
-            #     print(g.parents)
-            #     print(g.children)
-            #     print("-----------")
 
         elif option == 2:
             if not words_dict or not links_dict or not all_words:
@@ -95,10 +92,22 @@ def main():
             search_result = proba.process_search_results(result_set, query)
 
         elif option == 6:
+            if not search_result:
+                print("Search is not executed.")
+                continue
             table = calculate_rank(result_set, search_result, query, graph)
 
         elif option == 7:
+            if not table:
+                print("Rank calculation is not executed.")
+                continue
             show_results_table(table)
+
+        elif option == 8:
+            if not table:
+                print("Rank calculation is not executed.")
+                continue
+            show_results_paginated_table(table)
 
         elif option == 0:
             sys.exit('Bye')
@@ -343,6 +352,74 @@ def show_results_table(data):
 
     table = AsciiTable(table_data)
     print(table.table)
+
+def show_results_paginated_table(data):
+    n = None
+    while True:
+        n = input("Enter number of rows per page: ")
+
+        try:
+            n = int(n)
+        except:
+            print('Numbers only')
+            continue
+
+        if n < 1:
+            print("Number must be 1 or greater")
+            continue
+
+        break
+
+    table_header = ['Document', 'Rank']
+
+    merge_sort(data.rows)
+
+    page = 1
+    start = 0
+    end = n
+
+    table_rows = []
+    for row in data.rows:
+        table_row = []
+        table_row.append(row.link)
+        table_row.append(row.rank)
+        table_rows.append(table_row)
+
+    while True:
+        paginated_table = table_rows[start:end]
+
+        table_data = [table_header, *paginated_table, ["", "Page: " + str(page)]]
+        table = AsciiTable(table_data)
+        print(table.table)
+
+        option = None
+
+        while True:
+            option = input("Previous(<), Next(>), Exit(x): ")
+
+            if option not in ["<", ">", "x"]:
+                print("Not a valid option")
+                continue
+            break
+
+        if option == "<":
+            if start - n < 0:
+                print("Already on first page")
+                continue
+            start = start - n
+            end = end - n
+            page -= 1
+            continue
+        elif option == ">":
+            if end + n > len(data.rows) + len(data.rows) % n:
+                print("No more pages")
+                continue
+            start = start + n
+            end = end + n
+            page += 1
+            continue
+        else:
+            break
 
 
 main()
