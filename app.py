@@ -148,7 +148,7 @@ def create_graph(links_dict):
 def create_query():
     while True:
         query = input("Enter query: ").lower()
-        if query.count("and") > 1 or query.count("or") > 1 or query.count("not") > 1:
+        if query.count(" and ") > 1 or query.count(" or ") > 1 or query.count(" not ") > 1:
             print("Only one logical operator allowed")
             continue
 
@@ -157,19 +157,19 @@ def create_query():
 
         query_object = Query()
 
-        if "and" in query:
+        if " and " in query:
             query_object.operator = "and"
             splited = query.split("and")
             query_first = splited[0]
             query_second = splited[1]
-        elif "or" in query:
+        elif " or " in query:
             query_object.operator = "or"
-            splited = query.split("or")
+            splited = query.split(" or ")
             query_first = splited[0]
             query_second = splited[1]
-        elif "not" in query:
+        elif " not " in query:
             query_object.operator = "not"
-            splited = query.split("not")
+            splited = query.split(" not ")
             query_first = splited[0]
             query_second = splited[1]
         else:
