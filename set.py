@@ -10,6 +10,30 @@ class Set:
     def __init__(self):
         self.items = []
 
+    def process_search_results(self, search_results, query):
+
+        left_side = []
+        for search_word in query.query_first:
+            left_side.append(search_results[search_word])
+        result_first = self.union(left_side)
+
+        right_side = []
+        for search_word in query.query_second:
+            right_side.append(search_results[search_word])
+        result_second = self.union(right_side)
+
+        result = []
+
+        if query.operator == "and":
+            result = self.cross_section([result_first, result_second])
+        elif query.operator == "or":
+            result = self.union([result_first, result_second])
+        elif query.operator == "not":
+            result = self.complement([result_first, result_second])
+        else:
+            result = self.union(left_side)
+
+        return result
 
     def union(self, sets):
         result = []

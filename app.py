@@ -66,7 +66,9 @@ def main():
         elif option == 5:
             result_set = search_documents(trie, query)
 
+            proba = Set()
 
+            print(proba.process_search_results(result_set, query))
 
         elif option == 0:
             sys.exit('Bye')
@@ -75,8 +77,8 @@ def main():
 
 
 def choose_directory():
-    # temp = "C:\\Users\\Lenovo\\Desktop\\oisisi_python\\test-skup\\faq"
-    temp = "C:\\Users\\Maja\\Desktop\\oisisi_python\\test-skup\\faq"
+    temp = "C:\\Users\\Lenovo\\Desktop\\oisisi_python\\test-skup\\faq"
+    # temp = "C:\\Users\\Maja\\Desktop\\oisisi_python\\test-skup\\faq"
     # dir = input('Enter directory absolute path: ')
     dir = temp
 
