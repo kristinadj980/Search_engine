@@ -7,6 +7,8 @@ from graph import Graph
 from query import Query
 from set import Set
 from table import Table, TableRow
+from terminaltables import AsciiTable
+
 
 def main():
     filepaths = None
@@ -31,6 +33,7 @@ def main():
         print("4. Enter query")
         print("5. Search documents")
         print("6. Calculate rank")
+        print("7. Show results table")
         print("0. Exit")
 
         option = input('Choose menu option: ')
@@ -92,7 +95,10 @@ def main():
             search_result = proba.process_search_results(result_set, query)
 
         elif option == 6:
-            table = calculate_rank(result_set, result, query, graph)
+            table = calculate_rank(result_set, search_result, query, graph)
+
+        elif option == 7:
+            show_results_table(table)
 
         elif option == 0:
             sys.exit('Bye')
@@ -289,5 +295,54 @@ def calculate_rank(result_set, results, query, graph):
         table.rows.append(table_row)
 
     return table
+
+
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+
+        merge_sort(L)
+        merge_sort(R)
+
+        i = j = k = 0
+
+        while i < len(L) and j < len(R):
+            if L[i].rank > R[j].rank:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+
+def show_results_table(data):
+    table_data = [
+        ['Document', 'Rank']
+    ]
+
+    merge_sort(data.rows)
+
+    for row in data.rows:
+        table_row = []
+        table_row.append(row.link)
+        table_row.append(row.rank)
+        table_data.append(table_row)
+
+    table = AsciiTable(table_data)
+    print(table.table)
+
 
 main()
