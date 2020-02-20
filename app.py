@@ -6,18 +6,21 @@ from trie import Trie
 from graph import Graph
 from query import Query
 from set import Set
-
+from table import Table, TableRow
 
 def main():
     filepaths = None
     trie = None
     graph = None
     query = None
-    result_set = []
 
     links_dict = None
     words_dict = None
     all_words = None
+
+    result_set = None
+    search_result = None
+    table = None
 
     while True:
         print("##################################")
@@ -27,6 +30,7 @@ def main():
         print("3. Create graph")
         print("4. Enter query")
         print("5. Search documents")
+        print("6. Calculate rank")
         print("0. Exit")
 
         option = input('Choose menu option: ')
@@ -51,6 +55,12 @@ def main():
 
             all_words = merge_words(words_dict)
 
+            trie = None
+            graph = None
+            query = None
+            result = None
+
+
             # for g in graph:
             #     print(g.document_path)
             #     print(g.parents)
@@ -58,17 +68,31 @@ def main():
             #     print("-----------")
 
         elif option == 2:
+            if not words_dict or not links_dict or not all_words:
+                print('No selected directory.')
+                continue
             trie = create_trie(all_words)
         elif option == 3:
+            if not trie:
+                print('Trie is not created.')
+                continue
             graph = create_graph(links_dict)
         elif option == 4:
+            if not graph:
+                print('Graph is not created')
+                continue
             query = create_query()
         elif option == 5:
+            if not query:
+                print('Query is not entered.')
+                continue
             result_set = search_documents(trie, query)
 
             proba = Set()
+            search_result = proba.process_search_results(result_set, query)
 
-            print(proba.process_search_results(result_set, query))
+        elif option == 6:
+            table = calculate_rank(result_set, result, query, graph)
 
         elif option == 0:
             sys.exit('Bye')
@@ -208,5 +232,62 @@ def search_documents(trie, query):
         result_set[word] = trie.search(word)
 
     return result_set
+
+
+def calculate_rank(result_set, results, query, graph):
+    word_repetitions = dict()
+
+    # racunanje ranga samo na osnovu broja ponavljanja reci u tekucem dokumentu
+    for search_word in result_set:
+        #u slucaju NOT operatora ne brojimo reci sa desne strane
+        if query.operator == 'not' and search_word in query.query_second:
+            continue
+
+        for link in result_set[search_word]:
+            if link not in word_repetitions:
+                word_repetitions[link] = 1
+            else:
+                word_repetitions[link] += 1
+
+    #broj ponavljanja reci od roditelja
+    for link in word_repetitions:
+        node = graph.search(link)
+
+        for parent in node.parents:
+            if parent in word_repetitions:
+                word_repetitions[link] += word_repetitions[parent]
+
+    # normalizovanje rezultata na opseg od 0 do 1
+    max_el = max(word_repetitions.values())
+
+    for link in word_repetitions:
+        word_repetitions[link] = ((100 * word_repetitions[link]) / max_el) / 100
+
+    #page rank
+    d = 0.31
+    N = len(graph.nodes)
+    coeff = (1 - d) / N
+
+    for link in word_repetitions:
+        parents = graph.search(link).parents
+        page_rank = 0
+        for parent in parents:
+            parent_children = graph.search(parent).children
+            page_rank += coeff + d * (1 / N) / len(parent_children)
+
+        word_repetitions[link] += page_rank
+
+    #create table data
+    table = Table()
+
+    for result in results:
+        table_row = TableRow()
+
+        table_row.link = result
+        table_row.rank = word_repetitions[result]
+
+        table.rows.append(table_row)
+
+    return table
 
 main()

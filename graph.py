@@ -29,3 +29,7 @@ class Graph:
 
         self.nodes.append(new_node)
 
+    def search(self, document_path):
+        for node in self.nodes:
+            if node.document_path == document_path:
+                return node
