@@ -116,10 +116,7 @@ def main():
 
 
 def choose_directory():
-    temp = "C:\\Users\\Lenovo\\Desktop\\oisisi_python\\test-skup\\faq"
-    # temp = "C:\\Users\\Maja\\Desktop\\oisisi_python\\test-skup\\faq"
-    # dir = input('Enter directory absolute path: ')
-    dir = temp
+    dir = input('Enter directory absolute path: ')
 
     if not os.path.isdir(dir):
         print('Path does not exist or it is a file, not a directory')
