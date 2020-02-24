@@ -408,7 +408,7 @@ def show_results_paginated_table(data):
             page -= 1
             continue
         elif option == ">":
-            if end + n > len(data.rows) + len(data.rows) % n:
+            if end >= len(data.rows):
                 print("No more pages")
                 continue
             start = start + n
