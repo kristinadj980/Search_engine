@@ -32,7 +32,10 @@ class Trie():
                 root.children[index] = self.get_node()
             root = root.children.get(index)
 
-        root.documents = links
+        for path in links:
+            if path not in root.documents:
+                root.documents.append(path)
+
         root.terminating = True
 
     def search(self, word):
