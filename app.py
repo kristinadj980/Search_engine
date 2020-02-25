@@ -296,7 +296,11 @@ def calculate_rank(result_set, results, query, graph):
         table_row = TableRow()
 
         table_row.link = result
-        table_row.rank = word_repetitions[result]
+
+        try:
+            table_row.rank = word_repetitions[result]
+        except KeyError:
+            continue
 
         table.rows.append(table_row)
 
